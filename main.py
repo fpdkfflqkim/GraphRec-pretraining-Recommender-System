@@ -1,21 +1,21 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Created on 12 Jun, 2020
+@author: zhangxinghua
+
+Revised on 22 Apr, 2024
+@author: jeongjinmyung
+"""
+
 import torch
-import torch.nn as nn
-import pickle
 import numpy as np
-import torch.nn.functional as F
-import torch.utils.data
-from sklearn.metrics import mean_squared_error
-from sklearn.metrics import mean_absolute_error
-from math import sqrt
 import random
-from tqdm import tqdm
 import time
 import argparse
 import os
 import io
 import sys
-import logging
-
 
 from exp import exp_review_embedding, exp_rating
 
@@ -38,25 +38,6 @@ parser.add_argument('--exp', default='rating', help='rating | review')
 parser.add_argument('--metrics', default='mae', help='mae | hit')
 args = parser.parse_args()
 args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-
-# logging
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
-logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -  %(message)s',
-                    datefmt = '%m/%d/%Y %H:%M:%S',
-                    level = logging.INFO)
-logger = logging.getLogger(__name__)
-
-console_handler = logging.FileHandler(os.path.join(args.save_path, "log.txt"))
-console_handler.setLevel(logging.INFO)
-logger.addHandler(console_handler)
-
-file_error_handler = logging.FileHandler(os.path.join(args.save_path, "error.txt"))
-file_error_handler.setLevel(logging.ERROR)
-logger.addHandler(file_error_handler)
-
-logger.info(args)
 
 
 # seed

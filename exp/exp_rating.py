@@ -16,6 +16,14 @@ logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -  %(messag
                     level = logging.INFO)
 logger = logging.getLogger(__name__)
 
+console_handler = logging.FileHandler("./outputs/log.txt")
+console_handler.setLevel(logging.INFO)
+logger.addHandler(console_handler)
+
+file_error_handler = logging.FileHandler("./outputs/error.txt")
+file_error_handler.setLevel(logging.ERROR)
+logger.addHandler(file_error_handler)
+
 
 class GraphRec:
     def __init__(self, args):
@@ -24,34 +32,26 @@ class GraphRec:
     def _load_data(self):
         data_path = f'{self.args.data_path}{self.args.dataset}'
         list_path = f'{self.args.data_path}{self.args.datalist}'
-        df_path = f'{self.args.data_path}{self.args.origindf}'
         data_file = open(data_path, 'rb')
         list_file = open(list_path, 'rb')
-        dataframe_file = open(df_path, 'rb')
 
         history_u, history_i, history_ur, history_ir, history_ue, history_ie, \
-        train_u, train_i, train_r, train_e, valid_u, valid_i, valid_r, valid_e, \
-        test_u, test_i, test_r, test_e, social_neighbor, ratings =  pickle.load(data_file)
+        train_u, train_i, train_r, valid_u, valid_i, valid_r, \
+        test_u, test_i, test_r, social_neighbor, ratings =  pickle.load(data_file)
         valid_rank_data, test_rank_data = pickle.load(list_file)
-        origin_df = pd.read_pickle(dataframe_file)
-
-        embedding_mapper = {}
-        for i in range(len(origin_df)):
-            emb_idx = origin_df.loc[i]['embedding_idx']
-            embedding_mapper[emb_idx] = origin_df[origin_df['embedding_idx'] == emb_idx]['embedding'].item().to(self.args.device)
 
         return history_u, history_i, history_ur, history_ir, history_ue, history_ie, \
-            train_u, train_i, train_r, train_e, valid_u, valid_i, valid_r, valid_e, \
-            test_u, test_i, test_r, test_e, social_neighbor, ratings, \
-            valid_rank_data, test_rank_data, embedding_mapper
+            train_u, train_i, train_r, valid_u, valid_i, valid_r, \
+            test_u, test_i, test_r, social_neighbor, ratings, \
+            valid_rank_data, test_rank_data
     
 
     def train_and_infer_by_hit(self):
         # data
         history_u, history_i, history_ur, history_ir, history_ue, history_ie, \
-        train_u, train_i, train_r, train_e, valid_u, valid_i, valid_r, valid_e, \
-        test_u, test_i, test_r, test_e, social_neighbor, ratings, \
-        valid_rank_data, test_rank_data, embedding_mapper = self._load_data()
+        train_u, train_i, train_r, valid_u, valid_i, valid_r, \
+        test_u, test_i, test_r, social_neighbor, ratings, \
+        valid_rank_data, test_rank_data = self._load_data()
 
         trainset = torch.utils.data.TensorDataset(torch.LongTensor(train_u), torch.LongTensor(train_i),
                                               torch.FloatTensor(train_r))
@@ -123,9 +123,9 @@ class GraphRec:
     def train_and_infer_by_mse(self):
         # data
         history_u, history_i, history_ur, history_ir, history_ue, history_ie, \
-        train_u, train_i, train_r, train_e, valid_u, valid_i, valid_r, valid_e, \
-        test_u, test_i, test_r, test_e, social_neighbor, ratings, \
-        valid_rank_data, test_rank_data, embedding_mapper = self._load_data()
+        train_u, train_i, train_r, valid_u, valid_i, valid_r, \
+        test_u, test_i, test_r, social_neighbor, ratings, \
+        valid_rank_data, test_rank_data = self._load_data()
 
         trainset = torch.utils.data.TensorDataset(torch.LongTensor(train_u), torch.LongTensor(train_i),
                                               torch.FloatTensor(train_r))
