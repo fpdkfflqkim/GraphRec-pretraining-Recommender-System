@@ -68,8 +68,8 @@ class GraphRec:
         testset = torch.utils.data.TensorDataset(torch.LongTensor(test_u), torch.LongTensor(test_i),
                                                 torch.FloatTensor(test_r))
         train_loader = torch.utils.data.DataLoader(trainset, batch_size=self.args.batch_size, shuffle=True)
-        val_loader = torch.utils.data.DataLoader(validset, batch_size=self.args.batch_size, shuffle=False)
-        test_loader = torch.utils.data.DataLoader(testset, batch_size=self.args.batch_size, shuffle=False)
+        val_loader = torch.utils.data.DataLoader(validset, batch_size=self.args.batch_size, shuffle=True)
+        test_loader = torch.utils.data.DataLoader(testset, batch_size=self.args.batch_size, shuffle=True)
         
         num_users = history_u.__len__()
         num_items = history_i.__len__()
@@ -141,8 +141,8 @@ class GraphRec:
         testset = torch.utils.data.TensorDataset(torch.LongTensor(test_u), torch.LongTensor(test_i),
                                                 torch.FloatTensor(test_r))
         train_loader = torch.utils.data.DataLoader(trainset, batch_size=self.args.batch_size, shuffle=True)
-        val_loader = torch.utils.data.DataLoader(validset, batch_size=self.args.batch_size, shuffle=False)
-        test_loader = torch.utils.data.DataLoader(testset, batch_size=self.args.batch_size, shuffle=False)
+        val_loader = torch.utils.data.DataLoader(validset, batch_size=self.args.batch_size, shuffle=True)
+        test_loader = torch.utils.data.DataLoader(testset, batch_size=self.args.batch_size, shuffle=True)
         
         num_users = history_u.__len__()
         num_items = history_i.__len__()
