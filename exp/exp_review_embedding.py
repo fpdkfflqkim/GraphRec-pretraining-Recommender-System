@@ -309,7 +309,8 @@ class GraphRec:
                 hit_list.append(int(0 in rank))
 
                 dcg = 1 / log(1 + (np.argmin(rank) + 1))
-                idcg = sum([1 / log(i+1) for i in range(1,11)])
+                # idcg = sum([1 / log(i+1) for i in range(1,11)])
+                idcg = 1 / log(2)
                 ndcg = dcg / idcg
                 ndcg_list.append(ndcg)
 
