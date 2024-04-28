@@ -1,7 +1,7 @@
 python -u main.py \
-    --dataset dataset.pkl \
-    --datalist ranklist.pkl \
-    --origindf original_df.pkl \
+    --dataset dataset_v2.pkl \
+    --datalist ranklist_v2.pkl \
+    --origindf original_df_v2.pkl \
     --epochs 10 \
     --exp rating \
-    --metrics mae
+    --metrics hit
