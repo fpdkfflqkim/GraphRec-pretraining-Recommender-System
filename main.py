@@ -11,11 +11,8 @@ Revised on 22 Apr, 2024
 import torch
 import numpy as np
 import random
-import time
 import argparse
-import os
-import io
-import sys
+import gc
 
 from exp import exp_review_embedding, exp_rating
 
@@ -64,3 +61,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    gc.collect()
+    torch.cuda.empty_cache()
