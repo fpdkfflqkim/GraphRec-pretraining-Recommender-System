@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
 from math import sqrt
 
-from model import GraphRecReview
+from model import GraphRecItemside
 
 logging.basicConfig(format = '%(asctime)s - %(levelname)s - %(name)s -  %(message)s',
                     datefmt = '%m/%d/%Y %H:%M:%S',
@@ -73,10 +73,11 @@ class GraphRec:
         
         num_users = history_u.__len__()
         num_items = history_i.__len__()
+        num_ratings = ratings.__len__()
         
         # model
-        model = GraphRecReview.Model(num_users, num_items, embedding_mapper, history_u, history_i, history_ue,\
-                                     history_ie, self.args.embed_dim, social_neighbor, cuda=self.args.device).to(self.args.device)
+        model = GraphRecItemside.Model(num_users, num_items, num_ratings, embedding_mapper, history_u, history_i, history_ur, history_ue,\
+                                     history_ir, history_ie, self.args.embed_dim, social_neighbor, cuda=self.args.device).to(self.args.device)
         optimizer = torch.optim.RMSprop(model.parameters(), lr=self.args.lr, alpha=0.9)
         scheduler = StepLR(optimizer, step_size = self.args.lr_dc_step, gamma = self.args.lr_dc)
 
@@ -148,10 +149,11 @@ class GraphRec:
         
         num_users = history_u.__len__()
         num_items = history_i.__len__()
+        num_ratings = ratings.__len__()
         
         # model
-        model = GraphRecReview.Model(num_users, num_items, embedding_mapper, history_u, history_i, history_ue,\
-                                     history_ie, self.args.embed_dim, social_neighbor, cuda=self.args.device).to(self.args.device)
+        model = GraphRecItemside.Model(num_users, num_items, num_ratings, embedding_mapper, history_u, history_i, history_ur, history_ue,\
+                                     history_ir, history_ie, self.args.embed_dim, social_neighbor, cuda=self.args.device).to(self.args.device)
         optimizer = torch.optim.RMSprop(model.parameters(), lr=self.args.lr, alpha=0.9)
         scheduler = StepLR(optimizer, step_size = self.args.lr_dc_step, gamma = self.args.lr_dc)
 
@@ -200,7 +202,7 @@ class GraphRec:
         test_rmse, test_mae = self.test(model, test_loader)
         logger.info(f"test rmse: {test_rmse:.4f}, test mae: {test_mae:.4f}")
 
-
+    
     def rank_test(self, model, test_data):
         model.eval()
         rank_list = []

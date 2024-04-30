@@ -7,7 +7,7 @@ import pandas as pd
 from torch.optim.lr_scheduler import StepLR
 from sklearn.metrics import mean_squared_error
 from sklearn.metrics import mean_absolute_error
-from math import log, sqrt
+from math import sqrt
 
 from model import GraphRecRating
 

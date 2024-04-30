@@ -14,11 +14,11 @@ import random
 import argparse
 import gc
 
-from exp import exp_review_embedding, exp_rating
+from exp import exp_review_embedding, exp_rating, exp_userside_review, exp_itemside_review
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_path', default='data/ciao/preprocess/', help='dataset directory path: datasets/Ciao/Epinions')
+parser.add_argument('--data_path', default='data/ciao/preprocess/', help='dataset directory path')
 parser.add_argument('--dataset', default='dataset.pkl', help='pkl file dataset')
 parser.add_argument('--datalist', default='ranklist.pkl', help='pkl file list')
 parser.add_argument('--origindf', default='original_df.pkl', help='original dataframe')
@@ -31,7 +31,7 @@ parser.add_argument('--lr_dc_step', type=int, default=30, help='the number of st
 parser.add_argument('--patience', default=5, help='early stop patience')
 parser.add_argument('--save_path', default='./outputs', help='save path')
 parser.add_argument('--device', default='cuda', help='device')
-parser.add_argument('--exp', default='rating', help='rating | review')
+parser.add_argument('--exp', default='rating', help='rating | review | uonly | ionly | rnr')
 parser.add_argument('--metrics', default='mae', help='mae | hit')
 args = parser.parse_args()
 args.device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -50,6 +50,10 @@ def main():
         Exp = exp_review_embedding.GraphRec
     elif args.exp == 'rating':
         Exp = exp_rating.GraphRec
+    elif args.exp == 'uonly':
+        Exp = exp_userside_review.GraphRec
+    elif args.exp == 'ionly':
+        Exp = exp_itemside_review.GraphRec
 
     exp = Exp(args)
 
