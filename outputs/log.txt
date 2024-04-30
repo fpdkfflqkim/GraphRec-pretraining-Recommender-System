@@ -1,2 +1,0 @@
-[Epoch: 1, Iter: 0] Train Loss: 1.708
-[Epoch: 1, Iter: 0] Train Loss: 1.709

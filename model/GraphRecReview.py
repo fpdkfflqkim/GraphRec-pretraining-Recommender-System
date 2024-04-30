@@ -4,18 +4,34 @@ import torch.nn.functional as F
 
 
 class Model(nn.Module):
-    def __init__(self, num_users, num_items, embedding_dict, history_u, history_i, history_ue, history_ie, embed_dim, social_neighbor, cuda='cpu'):
+    def __init__(
+        self,
+        num_users,
+        num_items,
+        embedding_dict,
+        history_u,
+        history_i,
+        history_ue,
+        history_ie,
+        embed_dim,
+        social_neighbor,
+        cuda="cpu",
+    ):
         super(Model, self).__init__()
 
         self.embed_dim = embed_dim
         u2e = nn.Embedding(num_users, self.embed_dim)
         i2e = nn.Embedding(num_items, self.embed_dim)
         r2e = embedding_dict
-        self.enc_u = UI_Aggregator(i2e, r2e, u2e, embed_dim, history_u, history_ue, cuda, user=True)
-        self.enc_i = UI_Aggregator(i2e, r2e, u2e, embed_dim, history_i, history_ie, cuda, user=False)
+        self.enc_u = UI_Aggregator(
+            i2e, r2e, u2e, embed_dim, history_u, history_ue, cuda, user=True
+        )
+        self.enc_i = UI_Aggregator(
+            i2e, r2e, u2e, embed_dim, history_i, history_ie, cuda, user=False
+        )
         self.enc_social = Social_Aggregator(None, u2e, embed_dim, social_neighbor, cuda)
 
-        self.w_u = nn.Linear(2*self.embed_dim, self.embed_dim)
+        self.w_u = nn.Linear(2 * self.embed_dim, self.embed_dim)
 
         self.w_ur1 = nn.Linear(self.embed_dim, self.embed_dim)
         self.w_ur2 = nn.Linear(self.embed_dim, self.embed_dim)
@@ -86,7 +102,10 @@ class UI_Aggregator(nn.Module):
     """
     item and user aggregator: for aggregating embeddings of neighbors (item/user aggreagator).
     """
-    def __init__(self, i2e, r2e, u2e, embed_dim, history_u, history_ue, cuda="cpu", user=True):
+
+    def __init__(
+        self, i2e, r2e, u2e, embed_dim, history_u, history_ue, cuda="cpu", user=True
+    ):
         super(UI_Aggregator, self).__init__()
         # history_u: {user1:[item1, ...], ...} or {item1:[user1, ...], ...}
         # history_ue: {user1:[rating1, ...], ...} or {item1:[rating1, ...], ...} corresponding with history_ue
@@ -98,10 +117,10 @@ class UI_Aggregator(nn.Module):
         self.embed_dim = embed_dim
         self.history_u = history_u
         self.history_ue = history_ue
-        self.w_r1 = nn.Linear(self.embed_dim*2, self.embed_dim)
+        self.w_r1 = nn.Linear(self.embed_dim * 2, self.embed_dim)
         self.w_r2 = nn.Linear(self.embed_dim, self.embed_dim)
         self.att = Attention(self.embed_dim)
-        self.linear1 = nn.Linear(2*self.embed_dim, self.embed_dim) 
+        self.linear1 = nn.Linear(2 * self.embed_dim, self.embed_dim)
 
     def forward(self, nodes):
         # nodes: [2, 1, 3, 0] user or item index
@@ -113,7 +132,9 @@ class UI_Aggregator(nn.Module):
                 e_history.append(self.r2e[e_idx])
         num_len = len(ui_history)
 
-        embed_matrix = torch.empty(num_len, self.embed_dim, dtype=torch.float).to(self.device)
+        embed_matrix = torch.empty(num_len, self.embed_dim, dtype=torch.float).to(
+            self.device
+        )
 
         for i in range(num_len):
             history = ui_history[i]
@@ -131,7 +152,7 @@ class UI_Aggregator(nn.Module):
             e_history_empty = torch.empty_like(e_ui)
             for eh in range(e_history_empty.shape[0]):
                 e_history_empty[eh] = e_history[eh]
-            
+
             e_r = e_history_empty
             x = torch.cat((e_ui, e_r), 1)
             x = F.relu(self.w_r1(x))
@@ -158,6 +179,7 @@ class Social_Aggregator(nn.Module):
     """
     Social Aggregator: for aggregating embeddings of social neighbors.
     """
+
     def __init__(self, features, u2e, embed_dim, social_neighbor, cuda="cpu"):
         super(Social_Aggregator, self).__init__()
         # social_neighbor: {2:[2,..], } neighbors
@@ -167,7 +189,7 @@ class Social_Aggregator(nn.Module):
         self.embed_dim = embed_dim
         self.social_neighbor = social_neighbor
         self.att = Attention(self.embed_dim)
-        self.linear1 = nn.Linear(2*self.embed_dim, self.embed_dim)
+        self.linear1 = nn.Linear(2 * self.embed_dim, self.embed_dim)
 
     def forward(self, nodes):
         # nodes: [2, 1, 3, 0] user index
@@ -175,7 +197,9 @@ class Social_Aggregator(nn.Module):
         for node in nodes:
             to_neighs.append(self.social_neighbor[int(node)])
         num_len = len(nodes)
-        embed_matrix = torch.empty(num_len, self.embed_dim, dtype=torch.float).to(self.device)
+        embed_matrix = torch.empty(num_len, self.embed_dim, dtype=torch.float).to(
+            self.device
+        )
         for i in range(num_len):
             tmp_adj = to_neighs[i]
             num_neighs = len(tmp_adj)
