@@ -48,7 +48,7 @@ parser.add_argument("--patience", default=5, help="early stop patience")
 parser.add_argument("--save_path", default="./outputs", help="save path")
 parser.add_argument("--device", default="cuda", help="device")
 parser.add_argument(
-    "--exp", default="rating", help="rating | review | uonly | ionly | rnr"
+    "--exp", default="rating", help="rating | review | uonly | ionly"
 )
 parser.add_argument("--metrics", default="mae", help="mae | hit")
 args = parser.parse_args()
@@ -65,15 +65,15 @@ np.random.seed(fix_seed)
 def main():
 
     if args.exp == "review":
-        Exp = exp_review_embedding.GraphRec
+        Exp = exp_review_embedding
     elif args.exp == "rating":
-        Exp = exp_rating.GraphRec
+        Exp = exp_rating
     elif args.exp == "uonly":
-        Exp = exp_userside_review.GraphRec
+        Exp = exp_userside_review
     elif args.exp == "ionly":
-        Exp = exp_itemside_review.GraphRec
+        Exp = exp_itemside_review
 
-    exp = Exp(args)
+    exp = Exp.GraphRec(args)
 
     if args.metrics == "hit":
         exp.train_and_infer_by_hit()
