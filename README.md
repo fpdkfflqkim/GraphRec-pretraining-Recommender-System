@@ -1,7 +1,7 @@
 # Enhancing the Performance of GraphRec-based Recommendation System Using Language Models
 Academic Conference
     
-  2024 한국정보기술학회 하계종합학술대회(2023.11.20)
+  - 2024 한국정보기술학회 하계종합학술대회(2023.11.20)
 
 ## Purpose
 추천시스템 모델인 GraphRec의 한계를 보완하여 모델의 추천 성능을 향상
